@@ -1,0 +1,20 @@
+{
+  "name": "BaseServer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "nodemon": "^1.19.3",
+    "pg": "^7.12.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "db": "pg_ctl -D /usr/local/var/postgres start"
+  },
+  "author": "",
+  "license": "ISC"
+}

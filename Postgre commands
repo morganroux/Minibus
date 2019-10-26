@@ -1,0 +1,33 @@
+// Create a table with unique id
+CREATE TABLE users(
+   id SERIAL PRIMARY KEY,
+   name VARCHAR NOT NULL
+);
+
+// Update a row
+UPDATE datas SET value = 0.6  WHERE id = 1;
+
+// Add a row
+INSERT INTO datas (deviceid, type, value) VALUES ('0000000001', 'temp', 0.6);
+
+// Order by and retrieve the highest
+SELECT * FROM datas ORDER BY id DESC LIMIT 1;
+
+// Add a column
+ALTER TABLE table_name
+ADD COLUMN new_column_name data_type;
+
+// Make a column unique
+ALTER TABLE the_table ADD CONSTRAINT constraint_name UNIQUE (thecolumn);
+
+// Get the lastest value
+SELECT * FROM datas WHERE deviceid = '0000000001' ORDER BY timestamp DESC LIMIT 1;
+
+//List all the tables 
+\dt
+
+// connect to the database as user 
+\c database user
+
+// Delete rows
+DELETE FROM table (WHERE id=1)
