@@ -2,14 +2,13 @@ import React from 'react';
 import {View, AsyncStorage, StyleSheet} from 'react-native';
 import {Text, Input, Button} from 'react-native-elements';
 import { connect } from 'react-redux';
-import {updateToken, updateUserName} from '../store/actions/authActions';
-import {signUp, checkToken} from '../api/api';
+import {updateToken, updateUserName} from '../../store/actions/authActions';
+import {signIn, checkToken} from '../../api/api';
 
 class SignUpScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userName : '',
             email: '',
             password: '',
             errorMessage: ''
@@ -30,27 +29,24 @@ class SignUpScreen extends React.Component {
     onEmailChange = (email) => {
         this.setState ( () => ({email}));
     };
-    onUserNameChange = (userName) => {
-        this.setState ( () => ({userName}));
-    };
     onPasswordChange = (password) => {
         this.setState ( () => ({password}));
     };
-    onSignUp = async () => {
-        const {token, errorMessage} = await signUp(this.state.userName, this.state.email, this.state.password);
+    onSignIn = async () => {
+        const {token, userName, errorMessage} = await signIn(this.state.email, this.state.password);
         if(errorMessage || !token) {
             this.setState( () => ({errorMessage}));
         }
         else {
-        this.setState( () => ({errorMessage: ''}));
-        this.props.updateToken(token);
-        this.props.updateUserName(this.state.userName);
-        await AsyncStorage.setItem('token', token);
-        this.props.navigation.navigate('mainFlow');
+            this.setState( () => ({errorMessage: ''}));
+            this.props.updateToken(token);
+            this.props.updateUserName(userName);
+            await AsyncStorage.setItem('token', token);
+            this.props.navigation.navigate('mainFlow');
         }
     }
-    onGoToSignIn = () => {
-        this.props.navigation.navigate('SignIn');
+    onGoToSignUp = () => {
+        this.props.navigation.navigate('SignUp');
     }
     render() {
         return (
@@ -58,13 +54,6 @@ class SignUpScreen extends React.Component {
             <Text h3>Sign up for Tracker</Text>
             <Text>{this.state.errorMessage}</Text>
             <Text>{this.props.token}</Text>
-            <Input 
-                label="Username"  
-                value={this.state.userName}
-                onChangeText={this.onUserNameChange}
-                autoCapitalize="none"
-                autoCorrect={false}
-            />
             <Input 
                 label="Email"  
                 value={this.state.email}
@@ -81,12 +70,12 @@ class SignUpScreen extends React.Component {
                 autoCorrect={false}
             />
             <Button 
-                title="Sign up"
-                onPress={this.onSignUp} 
+                title="Sign in"
+                onPress={this.onSignIn} 
             />
             <Button
-                title="Go to sign In"
-                onPress={this.onGoToSignIn}
+                title="Go to sign Up"
+                onPress={this.onGoToSignUp}
             />
         </View>
         )
