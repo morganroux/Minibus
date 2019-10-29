@@ -1,6 +1,6 @@
 import React from 'react';
 import RNPickerSelect from 'react-native-picker-select';
-import {View, StyleSheet, Text, Button} from 'react-native-elements';
+import {Text, Button} from 'react-native-elements';
 import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
 
@@ -13,14 +13,14 @@ class StopRunScreen extends React.Component {
                 type: 'tests'
             }
         }
-        this.coords = this.props.navigation.getParam('coords', {}); 
+        this.run = this.props.navigation.getParam('run', {});
     }
     onClickValidate = () => {
         this.props.navigation.navigate(
             'SummaryRun', 
             {run: {
-                    options: this.state.options,
-                    coords : this.coords
+                ...this.run,
+                options: this.state.options,
             }}
         );
     }

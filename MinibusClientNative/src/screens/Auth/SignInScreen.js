@@ -51,7 +51,7 @@ class SignUpScreen extends React.Component {
     render() {
         return (
         <View style={styles.container}>
-            <Text h3>Sign up for Tracker</Text>
+            <Text h3>Sign in for Minibus</Text>
             <Text>{this.state.errorMessage}</Text>
             <Text>{this.props.token}</Text>
             <Input 

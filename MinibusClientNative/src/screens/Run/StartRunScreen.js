@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-navigation';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
+import { getRoute } from '../../api/api';
 
 class StartRunScreen extends React.Component {
     constructor(props) {
@@ -14,7 +15,14 @@ class StartRunScreen extends React.Component {
             location: null,
             errorMessage: null,
         }
-        this.locationFrom = null;
+        this.locationFrom = {
+            latitude: null,
+            longitude: null
+        };
+        this.locationTo = {
+            latitude: null,
+            longitude: null
+        };
         this.simul = true;
 
     }
@@ -26,12 +34,11 @@ class StartRunScreen extends React.Component {
                     ...location,
                     coords: {
                         ...location.coords,
-                        latitude: location.coords.latitude + 0.001,
-                        longitude: location.coords.longitude,
+                        latitude: location.coords.latitude + 0.01,
+                        longitude: location.coords.longitude + 0.006,
                     }
                 }
-            }))
-            console.log(this.state.location);
+            }));
             this.simul ? this.simulLocation() : null;
         }, 1000)
     }
@@ -55,22 +62,29 @@ class StartRunScreen extends React.Component {
             errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
             });
         } else {
-            this.locationFrom = await this._getLocationAsync();
+            ({
+                coords: {
+                    latitude: this.locationFrom.latitude, 
+                    longitude:this.locationFrom.longitude
+                }
+            } = await this._getLocationAsync());
             this.simulLocation();
         }
     }
 
     onClickStop = async () => {
-        const locationTo = this.state.location;
+        ({latitude: this.locationTo.latitude, longitude:this.locationTo.longitude} = this.state.location.coords);
         this.simul=false;
+        const route = await getRoute(this.locationFrom, this.locationTo);
         this.props.navigation.navigate(
             'StopRun', 
-            {
-                coords : {
+            {run: {
+                locations : {
                     locationFrom : this.locationFrom,
-                    locationTo
-                } 
-            }
+                    locationTo: this.locationTo,
+                },
+                route
+            }}
         );
     }
 

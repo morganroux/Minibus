@@ -1,14 +1,20 @@
 import axios from 'axios';
+import parser from 'fast-xml-parser';
 
-export const trackerApi = axios.create(
+const minibusApi = axios.create(
 {
- baseURL: 'http://127.0.0.1:3000'
+ baseURL: 'http://3318cc50.ngrok.io'
+});
+
+const michelinApi = axios.create (
+{
+    baseURL : "https://secure-apir.viamichelin.com"
 });
 
 export const signUp = async (userName, email, password) => {
     try
     {
-        const response =  await trackerApi.post('/signup', {userName, email, password});
+        const response =  await minibusApi.post('/signup', {userName, email, password});
         return ({
             token: response.data.token,
             errorMessage: ''
@@ -26,7 +32,7 @@ export const signUp = async (userName, email, password) => {
 export const signIn = async (email, password) => {
     try
     {
-        const response =  await trackerApi.post('/signin', {email, password});
+        const response =  await minibusApi.post('/signin', {email, password});
         return ({
             token: response.data.token,
             userName: response.data.username,
@@ -45,7 +51,7 @@ export const signIn = async (email, password) => {
 export const signInWithBarCode = async (barcode) => {
     try
     {
-        const response =  await trackerApi.post('/signinwithbarcode', {barcode});
+        const response =  await minibusApi.post('/signinwithbarcode', {barcode});
         return ({
             token: response.data.token,
             userName: response.data.userName,
@@ -69,7 +75,7 @@ export const checkToken = async (token) => {
     }
     else {
         try{
-            const { userName, userId } = await trackerApi.post('/checkToken', {token});
+            const { userName, userId } = await minibusApi.post('/checkToken', {token});
             return ({
                 errorMessage: '',
                 userName,
@@ -94,7 +100,7 @@ export const addRun = async (token, run, options) => {
     }
     else {
         try{
-            await trackerApi.post('/addRun', {userId, run, options});
+            await minibusApi.post('/addRun', {userId, run, options});
             return ({
                 errorMessage: 'OK'
             });
@@ -105,5 +111,46 @@ export const addRun = async (token, run, options) => {
                 userName: ''
             });
         }
+    }
+}
+
+export const getAddress =  async (long, lat) => {
+    try {
+        const response = await michelinApi.get(`/apir/1/rgeocode.xml?center=${long}:${lat}&authkey=RESTGP20191024223238071193335775`);
+        //const response = await michelinApi.get('/apir/1/rgeocode.xml?center=6.13:45.9198&authkey=RESTGP20191024223238071193335775');
+        const jsonObj = parser.parse(response.data);
+        return jsonObj;
+    }
+    catch(err) {
+        console.log(err);
+    }
+}
+export const getMapUrl = async (long, lat, zoom) => {
+    try {
+
+        const response = await michelinApi.get(`apir/1/map.xml/${long}:${lat}:${zoom}/800:600/fra?authkey=RESTGP20191024223238071193335775`);
+        const {response:{map:{url}}} = parser.parse(response.data);
+        return url;
+    } catch(err) {
+        console.log('erreur : ' + err);
+    }
+}
+
+export const getRoute =  async ({longitude :longFrom, latitude :latFrom}, {longitude: longTo, latitude :latTo}) => {
+    try {
+        let response = await michelinApi.get(`/apir/1/route.xml/fra?steps=1:e:${longFrom}:${latFrom};1:e:${longTo}:${latTo}&fuelCost=1.3&authkey=RESTGP20191024223238071193335775`);
+        // let response = await michelinApi.get('/apir/1/route.xml/fra?steps=1:e:2.0:48.0;1:e:3.0:49.0&authkey=RESTGP20191024223238071193335775&fuelCost=1.3');
+        const jsonObj = parser.parse(response.data);
+        const {response:{iti:{itineraryTrace : iti_trace, header:{summaries:{summary}}}}} = jsonObj;
+        const {totalDist, totalTime, consumption, tollCost:{car: tollCost}, fullMapDef:{id: mapId, size: {h, w}}} = summary;
+        response = await michelinApi.get(`/apir/1/mapbyid.xml/${mapId}/${w}:${h}/fra?iti_trace=${iti_trace}&authkey=RESTGP20191024223238071193335775`);
+        const {response:{map:{url}}} = parser.parse(response.data);
+        return {
+            summary,
+            iti_trace,
+            url
+        }
+    } catch(err) {
+        console.log(err);
     }
 }
