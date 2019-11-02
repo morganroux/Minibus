@@ -18,10 +18,10 @@ class StopRunScreen extends React.Component {
     onClickValidate = () => {
         this.props.navigation.navigate(
             'SummaryRun', 
-            {run: {
-                ...this.run,
+            {
+                run: this.run,
                 options: this.state.options,
-            }}
+            }
         );
     }
     render() {

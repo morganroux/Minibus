@@ -1,6 +1,8 @@
 
 const initialState = {
-    token: ''
+    token: '',
+    userName: '',
+    runList: [],
 }
 
 export default authReducer =  (state = initialState, action) => {
@@ -15,11 +17,11 @@ export default authReducer =  (state = initialState, action) => {
         return nextState || state;
 
     case 'UPDATE_USERNAME':
-    nextState = {
-        ...state,
-            userName: action.userName,
-        }
-    return nextState || state;
+        nextState = {
+            ...state,
+                userName: action.userName,
+            }
+        return nextState || state;
 
     case 'DELETE_TOKEN' :
         nextState = {
@@ -27,6 +29,14 @@ export default authReducer =  (state = initialState, action) => {
                 token: '',
             }
         return nextState || state;
+
+    case 'SET_RUNLIST' :
+        nextState = {
+            ...state,
+            runList: action.runList
+        }
+        return nextState || state;
+
     default:
       return state
     }

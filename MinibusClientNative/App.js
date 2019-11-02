@@ -8,6 +8,8 @@ import StartRunScreen from './src/screens/Run/StartRunScreen';
 import StopRunScreen from './src/screens/Run/StopRunScreen';
 import SummaryRunScreen from './src/screens/Run/SummaryRunScreen';
 import ConfirmRunScreen from './src/screens/Run/ConfirmRunScreen';
+import MyCardsScreen from './src/screens/Cards/MyCardsScreen';
+import CardDetailsScreen from './src/screens/Cards/CardDetailsScreen';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
@@ -28,6 +30,10 @@ const switchNavigator = createSwitchNavigator({
     StopRun: StopRunScreen,
     SummaryRun: SummaryRunScreen,
     ConfirmRun: ConfirmRunScreen
+  }),
+  cardsFlow: createStackNavigator({
+    MyCards: MyCardsScreen,
+    CardDetails: CardDetailsScreen
   })
 });
 

@@ -3,13 +3,15 @@ import parser from 'fast-xml-parser';
 
 const minibusApi = axios.create(
 {
- baseURL: 'http://3318cc50.ngrok.io'
+ baseURL: 'http://localhost:3000'
 });
+minibusApi.defaults.timeout = 5000;
 
 const michelinApi = axios.create (
 {
     baseURL : "https://secure-apir.viamichelin.com"
 });
+michelinApi.defaults.timeout = 5000;
 
 export const signUp = async (userName, email, password) => {
     try
@@ -75,7 +77,7 @@ export const checkToken = async (token) => {
     }
     else {
         try{
-            const { userName, userId } = await minibusApi.post('/checkToken', {token});
+            const { data:{userName, userId}} = await minibusApi.post('/checkToken', {token});
             return ({
                 errorMessage: '',
                 userName,
@@ -85,14 +87,15 @@ export const checkToken = async (token) => {
         catch(err) {
             return ({
                 errorMessage: 'Invalide stored token',
-                userName: ''
+                userName: '',
+                userId: ''
             });
         }
     }
 }
 
 export const addRun = async (token, run, options) => {
-    const { userId } = checkToken(token);
+    const { userId } = await checkToken(token);
     if (!userId){
         return ({
             errorMessage: 'Token error',
@@ -100,7 +103,7 @@ export const addRun = async (token, run, options) => {
     }
     else {
         try{
-            await minibusApi.post('/addRun', {userId, run, options});
+            await minibusApi.post('/addRun', {userId, run, options, timestamp: Date.now()});
             return ({
                 errorMessage: 'OK'
             });
@@ -109,6 +112,30 @@ export const addRun = async (token, run, options) => {
             return ({
                 errorMessage: err,
                 userName: ''
+            });
+        }
+    }
+}
+
+export const getRunList = async(token) => {
+    const { userId } = await checkToken(token);
+    if (!userId){
+        return ({
+            errorMessage: 'Token error',
+        });
+    }
+    else {
+        try{
+            const { data:{runList} } = await minibusApi.get(`/getRunList?userId=${userId}`);
+            return ({
+                errorMessage: "OK",
+                runList
+            });
+        }
+        catch(err) {
+            return ({
+                errorMessage: err,
+                runList: ''
             });
         }
     }
@@ -138,6 +165,7 @@ export const getMapUrl = async (long, lat, zoom) => {
 
 export const getRoute =  async ({longitude :longFrom, latitude :latFrom}, {longitude: longTo, latitude :latTo}) => {
     try {
+        
         let response = await michelinApi.get(`/apir/1/route.xml/fra?steps=1:e:${longFrom}:${latFrom};1:e:${longTo}:${latTo}&fuelCost=1.3&authkey=RESTGP20191024223238071193335775`);
         // let response = await michelinApi.get('/apir/1/route.xml/fra?steps=1:e:2.0:48.0;1:e:3.0:49.0&authkey=RESTGP20191024223238071193335775&fuelCost=1.3');
         const jsonObj = parser.parse(response.data);
@@ -152,5 +180,8 @@ export const getRoute =  async ({longitude :longFrom, latitude :latFrom}, {longi
         }
     } catch(err) {
         console.log(err);
+        return {
+            err
+        }
     }
 }

@@ -4,10 +4,10 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 const router  = express.Router();
+const secretKey = 'MY_SECRET_KEY';
 
 router.post('/signup', async (req, res) => {
     const {userName, email, password} = req.body;
-    console.log(req.body);
     if (!userName || !email || !password) {
         return res.status(422).send({error: 'Must provide user name, email and password'});
     }
@@ -16,7 +16,7 @@ router.post('/signup', async (req, res) => {
     const hash = await bcrypt.hash(password, salt);
     const result = await pool.query('INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id', [userName, email, hash]);
     const userId = result.rows[0].id;
-    const token = await jwt.sign({userId}, 'MY_SECRET_KEY')
+    const token = await jwt.sign({userId}, secretKey)
     res.send({token});
     }
     catch (error) {
@@ -41,8 +41,7 @@ router.post('/signin', async (req, res) => {
             throw ({error: 'Invalid password or email'});
         }
         else {
-            console.log(user);
-            const token = await jwt.sign({userId: user.id}, 'MY_SECRET_KEY');
+            const token = await jwt.sign({userId: user.id}, secretKey);
             res.send({username: user.username, token});
         } 
     } catch (error) {
@@ -53,7 +52,6 @@ router.post('/signin', async (req, res) => {
 router.post('/signinwithbarcode', async (req, res) => {
     const {barcode} = req.body;
     try{
-        console.log(barcode);
         if (!barcode) {
             throw ({error: 'Must provide barcode'});
         }
@@ -63,7 +61,7 @@ router.post('/signinwithbarcode', async (req, res) => {
             throw({error: 'Invalid barcode'});
         }
         else {
-            const token = await jwt.sign({deviceId: device.id}, 'MY_SECRET_KEY');
+            const token = await jwt.sign({deviceId: device.id}, secretKey);
             return res.send({
                 token,
                 userName: device.username});
@@ -76,17 +74,50 @@ router.post('/signinwithbarcode', async (req, res) => {
 
 router.post('/checkToken', async (req, res) => {
     try {
-        const {userId} = await jwt.verify(req.body.token, 'MY_SECRET_KEY');
+        const {userId} = await jwt.verify(req.body.token, secretKey);
         const result = await pool.query('SELECT * FROM users WHERE id = $1 LIMIT 1', [userId]);
         const user = result.rows[0];
         if (!user) {
             throw({error: 'Invalid token'});
         } 
         else {
-            return res.send({userName: user.username});
+            return res.send({
+                userName: user.username,
+                userId: user.id});
         }
     } catch(error) {
         return res.status(402).send(error);
     }
 });
+
+router.post('/addRun', async (req, res) => {
+    try {
+        const {userId, run, options:{child, type}, timestamp} = req.body;
+        const result = await pool.query(
+            'INSERT INTO runs (userId, run, child, type, timestamp) VALUES ($1, $2, $3, $4, to_timestamp($5))', 
+            [userId, run, child, type, timestamp / 1000.0]
+        );
+        return res.send({
+            errorMessage: "OK"
+        });
+    } catch(error){
+        console.log('err : ' + error);
+        return res.status(402).send(error);
+    }
+});
+
+router.get('/getRunList', async (req, res) => {
+    try {
+        const { userId } = req.query;
+        const result = await pool.query('SELECT * FROM runs WHERE userId = $1',[userId]);
+        runList = result.rows;
+        return res.send({
+            runList
+        });
+    } catch(error) {
+        console.log('err : ' + error);
+        return res.status(402).send(error);
+    }
+});
+
 module.exports = router;

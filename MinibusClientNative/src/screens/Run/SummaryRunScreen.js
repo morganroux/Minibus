@@ -14,6 +14,7 @@ class SummaryRunScreen extends React.Component {
     constructor(props) {
         super(props);
         this.run = this.props.navigation.getParam('run', {});
+        this.options = this.props.navigation.getParam('options', {});
         ({
             locations:{
                 locationFrom: this.origin,
@@ -33,7 +34,7 @@ class SummaryRunScreen extends React.Component {
     }
     storeNewRun = async () => {
         try {
-            await addRun(this.props.token, this.run)
+            await addRun(this.props.token, this.run, this.options);
         }
         catch(err)
         {
@@ -51,7 +52,7 @@ class SummaryRunScreen extends React.Component {
     onClickConfirm = async () => {
         try {
             await this.storeNewRun();
-            this.props.navigation.navigate('ConfirmRun', {options: this.run.options})
+            this.props.navigation.navigate('ConfirmRun', {options: this.options})
         }
         catch(err) {
 
@@ -92,8 +93,8 @@ class SummaryRunScreen extends React.Component {
                 <Text>
                     Distance : {this.totalDist / 1000}km - Temps : {hour}h{minutes}min  - Péage : {this.tollCost}€ - Coût carburant : {this.consumption}€
                 </Text>
-                <Text>Enfant : {this.run.options.child}</Text>
-                <Text>Type : {this.run.options.type}</Text>
+                <Text>Enfant : {this.options.child}</Text>
+                <Text>Type : {this.options.type}</Text>
                 <Button 
                     title="Confirmer"
                     onPress={this.onClickConfirm}

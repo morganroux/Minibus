@@ -18,3 +18,10 @@ export const deleteToken = () => {
         type: 'DELETE_TOKEN'
     });
 }
+
+export const setRunList = (runList) => {
+    return ({
+        type: 'SET_RUNLIST',
+        runList
+    });
+}

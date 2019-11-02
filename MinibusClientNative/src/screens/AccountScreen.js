@@ -3,6 +3,7 @@ import {View, StyleSheet, Text, Button} from 'react-native';
 import { AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
 import { deleteToken } from '../store/actions/authActions'
+import { SafeAreaView } from 'react-navigation';
 
 class AccountScreen extends React.Component {
     constructor(props) {
@@ -15,13 +16,17 @@ class AccountScreen extends React.Component {
     }
     render() {
         return (
-            <View>
+            <SafeAreaView>
                 <Text style = {{fontSize: 48}}>Account Screen</Text>
                 <Button 
-                    title='Logout'
+                    title="Logout"
                     onPress={this.onLogOut}
                 />
-            </View>
+                <Button 
+                    title="Home"
+                    onPress={() => this.props.navigation.navigate('Dashboard')}
+                />
+            </SafeAreaView>
         )
     }
 }
