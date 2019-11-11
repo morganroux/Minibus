@@ -75,7 +75,7 @@ class StartRunScreen extends React.Component {
     onClickStop = async () => {
         
         ({latitude: this.locationTo.latitude, longitude:this.locationTo.longitude} = this.state.location.coords);
-        this.simul=false;
+        this.simul=false; 
         try{
             const route = await getRoute(this.locationFrom, this.locationTo);
             this.props.navigation.navigate(

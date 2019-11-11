@@ -21,8 +21,7 @@ class CardDetailsScreen extends React.Component {
                     <View key={item.id}>
                         <Text>Enfant : {item.child}</Text>
                         <Text>Type : {item.type}</Text>
-                        <Text>Date : {item.timestamp}</Text>
-                        
+                        <Text>Date : {item.timestamp}</Text>  
                     </View>
                     ))
                 })}

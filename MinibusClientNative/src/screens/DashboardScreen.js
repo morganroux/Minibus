@@ -2,24 +2,12 @@ import React from 'react';
 import {View, StyleSheet, Text, Button} from 'react-native-elements';
 import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
-import { setRunList } from '../store/actions/authActions';
-import { getRunList } from '../api/api'
+
 
 class DashboardScreen extends React.Component {
     constructor(props) {
         super(props);
     };
-
-    async componentWillMount() {
-        try {
-            const { runList } = await getRunList(this.props.token);
-            this.props.setRunList(runList);
-        }
-        catch(err)
-        {
-            console.log('erreur');
-        }
-    }
 
     onClickMonCompte = () => {
 
@@ -54,7 +42,7 @@ const mapStateToProps = ({token, userName}) => ({
     userName
 });
 const mapDispatchToProps = (dispatch, props) => ({
-    setRunList: (runList) => dispatch(setRunList(runList))
+  
 })
   
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardScreen);

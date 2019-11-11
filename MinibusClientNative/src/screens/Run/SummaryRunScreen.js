@@ -31,9 +31,16 @@ class SummaryRunScreen extends React.Component {
                 }
             }
         } = this.run);
+        this.state = {
+            origin : this.origin,
+            dest: this.dest
+        }
+        console.log(this.state);
     }
     storeNewRun = async () => {
         try {
+            this.run.locations.locationFrom =  this.state.origin;
+            this.run.locations.locationTo = this.state.dest;
             await addRun(this.props.token, this.run, this.options);
         }
         catch(err)
@@ -79,14 +86,16 @@ class SummaryRunScreen extends React.Component {
                     <Marker
                         draggable
                         coordinate={this.origin}
+                        onDragEnd={({nativeEvent: {coordinate}}) => this.setState({origin: coordinate})}
                     />
                     <Marker
                         draggable
                         coordinate={this.dest}
+                        onDragEnd={({nativeEvent: {coordinate}}) => this.setState({dest: coordinate})}
                     />
                     <MapViewDirections
-                        origin={this.origin}
-                        destination={this.dest}
+                        origin={this.state.origin}
+                        destination={this.state.dest}
                         apikey={GOOGLE_MAPS_APIKEY}
                     />
                 </MapView>
