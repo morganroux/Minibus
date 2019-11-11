@@ -6,7 +6,6 @@ import { SafeAreaView } from 'react-navigation';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
-import { getRoute } from '../../api/api';
 
 class StartRunScreen extends React.Component {
     constructor(props) {
@@ -77,15 +76,13 @@ class StartRunScreen extends React.Component {
         ({latitude: this.locationTo.latitude, longitude:this.locationTo.longitude} = this.state.location.coords);
         this.simul=false; 
         try{
-            const route = await getRoute(this.locationFrom, this.locationTo);
             this.props.navigation.navigate(
-                'StopRun', 
+                'SummaryRun', 
                 {run: {
                     locations : {
                         locationFrom : this.locationFrom,
                         locationTo: this.locationTo,
-                    },
-                    route
+                    }
                 }}
             );
         }
