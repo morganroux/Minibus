@@ -1,5 +1,5 @@
 const express = require('express');
-const authRoutes = require('./routes/authRoutes');
+const authRoutes = require('./routes/routes');
 //const trackRoutes = require('./routes/trackRoutes');
 const bodyParser = require('body-parser');
 const requireAuth = require('./middlewares/requireAuth')

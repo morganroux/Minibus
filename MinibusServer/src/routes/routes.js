@@ -2,9 +2,9 @@ const express = require('express');
 const pool = require('../db/postgre');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-
 const router  = express.Router();
 const secretKey = 'MY_SECRET_KEY';
+const createPdf = require('../pdf/pdf-generator');
 
 router.post('/signup', async (req, res) => {
     const {userName, email, password} = req.body;
@@ -117,6 +117,15 @@ router.get('/getRunList', async (req, res) => {
     } catch(error) {
         console.log('err : ' + error);
         return res.status(402).send(error);
+    }
+});
+
+router.get('/pdf', async (req, res) => {
+    try{
+        createPdf();
+        res.status(200).send();
+    } catch(err) {
+        res.status(500).send();
     }
 });
 
