@@ -2,18 +2,15 @@ const fs = require("fs");
 const path = require("path");
 const puppeteer = require('puppeteer');
 const handlebars = require("handlebars");
+const sendPdf = require('./email');
 
 const createPdf = async () => {
     console.log('lets go');
 
     const data = {
-        title: "A new Brazilian School",
+        title: "Minibus ça déchire",
         date: "05/12/2018",
-        name: "Rodolfo Luis Marcos",
-        age: 28,
-        birthdate: "12/07/1990",
-        course: "Computer Science",
-        obs: "Graduated in 2014 by Federal University of Lavras, work with Full-Stack development and E-commerce.",
+        obs: "Prêt pour révolutionner la vie des mamans",
         list: [
             {
                 name: "test1",
@@ -30,14 +27,14 @@ const createPdf = async () => {
         ],
     }
 
-    const templateHtml = fs.readFileSync(path.join(process.cwd(), '/src/pdf/template-pdf.html'), 'utf8');
+    const templateHtml = fs.readFileSync(path.join(process.cwd(), '/src/utils/template-pdf.html'), 'utf8');
 	const template = handlebars.compile(templateHtml);
 	const html = template(data);
 
 	let milis = new Date();
 	milis = milis.getTime();
 
-	const pdfPath = `${data.name}-${milis}.pdf`;
+	const pdfPath = `Minibus-${milis}.pdf`;
 
 	const options = {
 		width: '1230px',
@@ -64,7 +61,8 @@ const createPdf = async () => {
     });
 
 	await page.pdf(options);
-	await browser.close();
+    await browser.close();
+    await sendPdf(pdfPath);
 }
 
 module.exports = createPdf;

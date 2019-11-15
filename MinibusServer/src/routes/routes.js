@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const router  = express.Router();
 const secretKey = 'MY_SECRET_KEY';
-const createPdf = require('../pdf/pdf-generator');
+const createPdf = require('../utils/pdf-generator');
 
 router.post('/signup', async (req, res) => {
     const {userName, email, password} = req.body;
