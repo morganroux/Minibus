@@ -120,9 +120,11 @@ router.get('/getRunList', async (req, res) => {
     }
 });
 
-router.get('/pdf', async (req, res) => {
+router.post('/exportToPdf', async (req, res) => {
     try{
-        createPdf();
+        const { data } = req.body
+        console.log(req.body)
+        createPdf(data);
         res.status(200).send();
     } catch(err) {
         res.status(500).send();

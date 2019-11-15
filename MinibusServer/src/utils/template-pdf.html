@@ -71,13 +71,14 @@
 	<div class="report-body">
 		<div class="obs">
 			<p>Obs: {{obs}}</p>
+			<p>Hello {{userName}}</p>
 		</div>
 	</div>
 	<ul class="people_list">
-		{{#each list}}
-		<li>Today, {{this.name}} is {{this.age}} years old</li>
+		{{#each items}}
+		<li>Today, {{this.child}} did {{this.type}}</li>
 		{{/each}}
-	  </ul>
+	</ul>
 	<div class="report-photo">
 		<img src="student.png">
 	</div>
