@@ -3,7 +3,7 @@ import {View, AsyncStorage, StyleSheet} from 'react-native';
 import {Text, Input, Button} from 'react-native-elements';
 import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
-import { exportCard } from '../../utils/exportCards';
+import { exportToPdf } from '../../api/api';
 
 class CardDetailsScreen extends React.Component {
     constructor(props) {
@@ -14,7 +14,7 @@ class CardDetailsScreen extends React.Component {
     onExport = () => {
         this.props.runList.map( (item) => {
             if (item.id == this.runId) {
-                exportCard(item);
+                exportToPdf(this.props.token, [item]);
             }
         });
     }
@@ -35,7 +35,7 @@ class CardDetailsScreen extends React.Component {
                 })}
                 <Button
                     title="Exporter"
-                    onPress={onExport}
+                    onPress={this.onExport}
                 />
             </SafeAreaView>
         )

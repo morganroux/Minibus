@@ -185,3 +185,38 @@ export const getRoute =  async ({longitude :longFrom, latitude :latFrom}, {longi
         }
     }
 }
+
+export const exportToPdf = async (token, items) => {
+    const header = {
+        title: "Minibus ça déchire",
+        date: "05/12/2018",
+        obs: "Prêt pour révolutionner la vie des mamans",
+    }
+    const { userName } = await checkToken(token);
+    if (!userName){
+        console.log('zut');
+        return ({
+            errorMessage: 'Token error',
+        });
+    }
+    else {
+        try{
+            const data = {
+                ...header,
+                userName,
+                items
+            };
+            console.log(data);
+            await minibusApi.post('/exportToPdf', {data})
+            return ({
+                errorMessage: 'OK'
+            });
+        }
+        catch(err) {
+            console.log(err);
+            return ({
+                errorMessage: err
+            });
+        }
+    }
+}
