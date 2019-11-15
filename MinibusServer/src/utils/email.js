@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-const sendPdf = (pdfPath) => {
+const sendPdf = async (pdfPath) => {
     
     let transport = nodemailer.createTransport({
         host: 'smtp.gmail.com',
@@ -24,7 +24,7 @@ const sendPdf = (pdfPath) => {
         ]
     };
 
-    transport.sendMail(message, (err, info) => {
+    await transport.sendMail(message, (err, info) => {
         if (err) {
         console.log(err)
         } else {
