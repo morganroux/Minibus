@@ -13,7 +13,21 @@ const createPdf = async () => {
         age: 28,
         birthdate: "12/07/1990",
         course: "Computer Science",
-        obs: "Graduated in 2014 by Federal University of Lavras, work with Full-Stack development and E-commerce."
+        obs: "Graduated in 2014 by Federal University of Lavras, work with Full-Stack development and E-commerce.",
+        list: [
+            {
+                name: "test1",
+                age: 31
+            },
+            {
+                name: "test2",
+                age: 32,
+            },
+            {
+                name: "test3",
+                age: 33
+            }
+        ],
     }
 
     const templateHtml = fs.readFileSync(path.join(process.cwd(), '/src/pdf/template-pdf.html'), 'utf8');

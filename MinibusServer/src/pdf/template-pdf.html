@@ -80,9 +80,15 @@
 			<p>Obs: {{obs}}</p>
 		</div>
 	</div>
+	<ul class="people_list">
+		{{#each list}}
+		<li>Today, {{this.name}} is {{this.age}} years old</li>
+		{{/each}}
+	  </ul>
 	<div class="report-photo">
 		<img src="student.png">
 	</div>
+
 	<div class="report-footer">
 		A generic Company - All Rights reserved.
 	</div>
