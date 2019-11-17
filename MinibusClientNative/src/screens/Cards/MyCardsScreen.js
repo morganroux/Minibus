@@ -1,7 +1,8 @@
 import React from 'react';
 import {View, AsyncStorage, StyleSheet} from 'react-native';
 //import {Text, Input, Button} from 'react-native-elements';
-import { Container, Header, Content, Card, CardItem, Body, Text, Button, CheckBox} from 'native-base';
+import { Container, Header, Content, 
+    List, ListItem, Card, CardItem, Body, Text, Button, CheckBox} from 'native-base';
 import CardCheckable from './CardCheckable';
 import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
@@ -31,26 +32,38 @@ class MyCardsScreen extends React.Component {
         this.props.navigation.navigate('CardDetails', {runId})
     }
 
+    multiExport = () => {
+
+    }
     render() {
+        const cardList = this.props.runList.map( (run) => 
+            <CardCheckable key={run.id}
+                run={run}
+                multiSelect={this.state.multiSelect} 
+                onLongPress={() => this.setState({
+                    multiSelect: true
+                })}
+                onSinglePress={() => this.onPress(run.id)}
+            />
+        );
+
         return (
             <Container>
                 <Header>
                     <Text>Mes fiches</Text>
+                    {this.state.multiSelect &&
+                        <Button onPress={() => {this.setState({multiSelect: false})}}>
+                            <Text>Cancel</Text>
+                        </Button>
+                    }
                 </Header>
-                 <Content padder> 
-                    {this.props.runList.map( (run) => {
-                        return (
-                            <CardCheckable
-                                run={run}
-                                multiSelect={this.state.multiSelect} 
-                                onLongPress={() => this.setState({
-                                    multiSelect: true
-                                })}
-                                onSinglePress={() => this.onPress(run.id)}
-                                key={run.id}
-                            />
-                        ) 
-                    })}
+                 <Content padder>
+                    <List>{cardList}</List>
+                    {this.state.multiSelect &&
+                        <Button onPress={this.multiExport}>
+                            <Text>Export x cards</Text>
+                        </Button>
+                    }
                     <Button onPress={()=>this.props.navigation.navigate('mainFlow')}>
                         <Text>Home</Text>
                     </Button>
