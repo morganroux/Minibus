@@ -1,14 +1,19 @@
 import React from 'react';
 import {View, AsyncStorage, StyleSheet} from 'react-native';
-import {Text, Input, Button} from 'react-native-elements';
+//import {Text, Input, Button} from 'react-native-elements';
+import { Container, Header, Content, Card, CardItem, Body, Text, Button, CheckBox} from 'native-base';
+import CardCheckable from './CardCheckable';
 import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
 import { setRunList } from '../../store/actions/authActions';
-import { getRunList } from '../../api/api'
+import { getRunList } from '../../api/api';
 
 class MyCardsScreen extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            multiSelect: false
+        }
     };
 
     async componentWillMount() {
@@ -22,27 +27,35 @@ class MyCardsScreen extends React.Component {
         }
     }
 
-    onClick = (runId) => {
+    onPress = (runId) => {
         this.props.navigation.navigate('CardDetails', {runId})
     }
+
     render() {
         return (
-            <SafeAreaView>
-                <Text h3>Mes Fiches</Text>
-                {this.props.runList.map( (run) => {
-                    return (
-                        <Button 
-                            key={run.id}
-                            title={`${run.child} - ${run.type}`}
-                            onPress={() => this.onClick(run.id)}
-                        />
-                   ) 
-                })}
-                <Button 
-                    title= "Home"
-                    onPress={()=>this.props.navigation.navigate('mainFlow')}
-                />
-            </SafeAreaView>
+            <Container>
+                <Header>
+                    <Text>Mes fiches</Text>
+                </Header>
+                 <Content padder> 
+                    {this.props.runList.map( (run) => {
+                        return (
+                            <CardCheckable
+                                run={run}
+                                multiSelect={this.state.multiSelect} 
+                                onLongPress={() => this.setState({
+                                    multiSelect: true
+                                })}
+                                onSinglePress={() => this.onPress(run.id)}
+                                key={run.id}
+                            />
+                        ) 
+                    })}
+                    <Button onPress={()=>this.props.navigation.navigate('mainFlow')}>
+                        <Text>Home</Text>
+                    </Button>
+                </Content>
+            </Container> 
         )
     }
 }
