@@ -12,7 +12,7 @@ class CardDetailsScreen extends React.Component {
     };
 
     onExport = () => {
-        this.props.runList.map( (item) => {
+        this.props.runList.find( (item) => {
             if (item.id == this.runId) {
                 exportToPdf(this.props.token, [item]);
             }

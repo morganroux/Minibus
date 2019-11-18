@@ -5,16 +5,11 @@ class CardCheckable extends React.Component
 {
     constructor(props) {
         super(props);
-        this.state = {
-            check: false
-        }
     }
 
     onPress = () => {
         if (this.props.multiSelect) {
-            this.setState((prevState) => ({
-                check: !prevState.check
-            }));
+            this.props.onCheck(this.props.run.id);
         }
         else {
             this.props.onSinglePress();
@@ -27,12 +22,12 @@ class CardCheckable extends React.Component
                 <CardItem button 
                     delayLongPress = {1000}
                     onPress={this.onPress}
-                    onLongPress={this.props.onLongPress}>
+                    onLongPress={() => this.props.onLongPress(this.props.run.id)}>
                     <Body>
                         {this.props.multiSelect && 
                         <CheckBox 
                             onPress={this.onPress}
-                            checked={this.state.check}/>
+                            checked={!!this.props.checkboxs.find((item) => item === this.props.run.id)}/>
                         }
                         <Text>
                             {`${this.props.run.child} - ${this.props.run.type}`}
@@ -41,7 +36,8 @@ class CardCheckable extends React.Component
                     
                 </CardItem>
             </Card>
-        )}   
+        )
+    }   
 }
 
 export default CardCheckable;

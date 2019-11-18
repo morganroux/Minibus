@@ -1,19 +1,19 @@
 import React from 'react';
 import {View, AsyncStorage, StyleSheet} from 'react-native';
-//import {Text, Input, Button} from 'react-native-elements';
 import { Container, Header, Content, 
     List, ListItem, Card, CardItem, Body, Text, Button, CheckBox} from 'native-base';
 import CardCheckable from './CardCheckable';
 import { connect } from 'react-redux';
-import { SafeAreaView } from 'react-navigation';
 import { setRunList } from '../../store/actions/authActions';
 import { getRunList } from '../../api/api';
+import { exportToPdf } from '../../api/api';
 
 class MyCardsScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            multiSelect: false
+            multiSelect: false,
+            checkboxs:[],
         }
     };
 
@@ -22,8 +22,7 @@ class MyCardsScreen extends React.Component {
             const { runList } = await getRunList(this.props.token);
             this.props.setRunList(runList);
         }
-        catch(err)
-        {
+        catch(err) {
             console.log('erreur');
         }
     }
@@ -32,18 +31,43 @@ class MyCardsScreen extends React.Component {
         this.props.navigation.navigate('CardDetails', {runId})
     }
 
-    multiExport = () => {
-
+    onCheck = (id) => {
+        if (this.state.checkboxs.find( (item) => item === id)) {
+            this.setState((prevState) => ({
+                checkboxs: prevState.checkboxs.filter((item)=> item !== id)
+            }));
+        } else {
+            this.setState((prevState) => ({
+                checkboxs: [...prevState.checkboxs, id]
+            })); 
+        }
     }
+
+    multiExport = () => {
+        const items = [];
+        this.state.checkboxs.forEach((checkboxId)=>{
+            const newItem = this.props.runList.find((item) => item.id == checkboxId);
+            if (newItem) {
+                items.push(newItem);
+            }
+        })
+        exportToPdf(this.props.token, items);
+    }
+
     render() {
         const cardList = this.props.runList.map( (run) => 
             <CardCheckable key={run.id}
                 run={run}
+                checkboxs={this.state.checkboxs}
                 multiSelect={this.state.multiSelect} 
-                onLongPress={() => this.setState({
-                    multiSelect: true
-                })}
+                onLongPress={(id) => {
+                    (!this.state.multiSelect) && this.setState({
+                    multiSelect: true,
+                    checkboxs: [id]
+                    })
+                }}
                 onSinglePress={() => this.onPress(run.id)}
+                onCheck={this.onCheck}
             />
         );
 
@@ -52,7 +76,7 @@ class MyCardsScreen extends React.Component {
                 <Header>
                     <Text>Mes fiches</Text>
                     {this.state.multiSelect &&
-                        <Button onPress={() => {this.setState({multiSelect: false})}}>
+                        <Button onPress={() => this.setState({multiSelect: false, checkboxs: []})}>
                             <Text>Cancel</Text>
                         </Button>
                     }
@@ -60,8 +84,10 @@ class MyCardsScreen extends React.Component {
                  <Content padder>
                     <List>{cardList}</List>
                     {this.state.multiSelect &&
-                        <Button onPress={this.multiExport}>
-                            <Text>Export x cards</Text>
+                        <Button 
+                            onPress={this.multiExport}
+                            disabled={!this.state.checkboxs.length}>
+                            <Text>Export {this.state.checkboxs.length} cards</Text>
                         </Button>
                     }
                     <Button onPress={()=>this.props.navigation.navigate('mainFlow')}>

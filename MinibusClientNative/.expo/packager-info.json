@@ -3,7 +3,7 @@
   "expoServerPort": null,
   "packagerPort": null,
   "packagerPid": null,
-  "expoServerNgrokUrl": "https://59-uu9.anonymous.minibusclientnative.exp.direct",
-  "packagerNgrokUrl": "https://packager.59-uu9.anonymous.minibusclientnative.exp.direct",
-  "ngrokPid": 37572
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null
 }
